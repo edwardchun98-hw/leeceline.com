@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celine Lee — Sculptor</title>
+  <meta name="description" content="Portfolio of Celine Lee, sculptor working across mixed media, resin, wood, and fiber. Based in Seoul and Chicago.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#f5f3f0;--bg-deep:#edeae6;--text:#1a1a1a;--text-s:#6b6560;--text-t:#9b9590;
+      --border:#d8d4cf;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans','Helvetica Neue',sans-serif;
+      --ease:cubic-bezier(.25,.1,.25,1);--ease-out:cubic-bezier(.16,1,.3,1);
+    }
+    html{scroll-behavior:smooth;font-size:16px;-webkit-font-smoothing:antialiased}
+    body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+    ::selection{background:rgba(58,54,50,.15)}
+    img{display:block;max-width:100%;height:auto}
+    a{color:inherit;text-decoration:none}
+
+    .cursor-dot{position:fixed;width:6px;height:6px;background:var(--text);border-radius:50%;pointer-events:none;z-index:10000;opacity:0;transition:opacity .3s,transform .15s var(--ease);transform:translate(-50%,-50%);mix-blend-mode:difference}
+    .cursor-dot.visible{opacity:.5}
+    .cursor-dot.hovering{transform:translate(-50%,-50%) scale(5);opacity:.12}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:28px 48px;display:flex;justify-content:space-between;align-items:center;mix-blend-mode:difference;transition:padding .4s var(--ease)}
+    nav.scrolled{padding:18px 48px}
+    .nav-logo{font-family:var(--serif);font-size:1.15rem;font-weight:400;letter-spacing:.08em;color:#fff;text-transform:uppercase}
+    .nav-links{display:flex;gap:36px;list-style:none}
+    .nav-links a{font-family:var(--sans);font-size:.72rem;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#fff;position:relative;padding-bottom:2px}
+    .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:#fff;transition:width .4s var(--ease-out)}
+    .nav-links a:hover::after{width:100%}
+    .nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
+    .nav-toggle span{display:block;width:20px;height:1px;background:#fff;margin:5px 0;transition:all .3s var(--ease)}
+
+    .hero{position:relative;height:100vh;min-height:600px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 48px 80px;overflow:hidden;background:#141311}
+    .hero-bg{position:absolute;inset:0;overflow:hidden}
+    .hero-canvas{width:100%;height:100%;opacity:0;transition:opacity 2s var(--ease)}
+    .hero-canvas.loaded{opacity:1}
+    .hero-content{position:relative;z-index:2}
+    .hero-title{font-family:var(--serif);font-size:clamp(3.5rem,10vw,9rem);font-weight:300;line-height:.92;color:#fff;letter-spacing:-.02em;opacity:0;transform:translateY(40px);animation:heroIn 1.2s var(--ease-out) .4s forwards}
+    .hero-sub{font-family:var(--sans);font-size:.72rem;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:24px;opacity:0;transform:translateY(20px);animation:heroIn 1s var(--ease-out) .8s forwards}
+    .hero-scroll{position:absolute;bottom:32px;right:48px;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.4);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;opacity:0;animation:heroIn 1s var(--ease-out) 1.2s forwards}
+    .scroll-line{width:1px;height:48px;background:rgba(255,255,255,.2);position:relative;overflow:hidden}
+    .scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:rgba(255,255,255,.6);animation:scrollD 2s var(--ease) infinite}
+    @keyframes scrollD{0%{top:-100%}50%{top:100%}100%{top:100%}}
+    @keyframes heroIn{to{opacity:1;transform:translateY(0)}}
+
+    section{padding:140px 48px}
+    .slabel{font-family:var(--sans);font-size:.65rem;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--text-t);margin-bottom:48px}
+    .slabel span{display:inline-block;margin-right:16px;color:var(--border)}
+
+    .featured{padding-bottom:80px}
+    .featured-work{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;max-width:1400px;margin:0 auto}
+    .fi-wrap{position:relative;overflow:hidden;cursor:pointer;aspect-ratio:4/5}
+    .fi-wrap img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+    .fi-wrap:hover img{transform:scale(1.03)}
+    .fi-info{padding-top:60px;padding-left:40px}
+    .fi-num{font-family:var(--serif);font-size:.85rem;color:var(--text-t);letter-spacing:.05em;margin-bottom:24px}
+    .fi-title{font-family:var(--serif);font-size:clamp(2rem,4vw,3.5rem);font-weight:300;line-height:1.1;letter-spacing:-.01em;margin-bottom:16px}
+    .fi-year{font-family:var(--serif);font-size:1.25rem;font-weight:300;color:var(--text-s);font-style:italic;margin-bottom:32px}
+    .fi-meta{font-family:var(--sans);font-size:.78rem;color:var(--text-s);line-height:1.8;letter-spacing:.02em}
+    .fi-meta strong{font-weight:400;color:var(--text);display:block;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;margin-top:16px}
+    .fi-meta strong:first-child{margin-top:0}
+    .fi-cta{display:inline-flex;align-items:center;gap:10px;margin-top:40px;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text);padding-bottom:3px;border-bottom:1px solid var(--border);transition:border-color .3s,gap .3s var(--ease);cursor:pointer}
+    .fi-cta:hover{border-color:var(--text);gap:16px}
+    .fi-cta svg{width:14px;height:14px;transition:transform .3s var(--ease)}
+    .fi-cta:hover svg{transform:translateX(3px)}
+
+    .works-archive{background:var(--bg-deep)}
+    .wgrid{max-width:1400px;margin:0 auto}
+    .wi{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding:56px 0;border-top:1px solid var(--border);cursor:pointer;position:relative}
+    .wi:last-child{border-bottom:1px solid var(--border)}
+    .wi-l{display:flex;align-items:baseline;gap:24px}
+    .wi-n{font-family:var(--serif);font-size:.85rem;color:var(--text-t);min-width:24px}
+    .wi-i h3{font-family:var(--serif);font-size:clamp(1.5rem,2.5vw,2.2rem);font-weight:300;line-height:1.2;transition:color .3s}
+    .wi:hover .wi-i h3{color:var(--text-s)}
+    .wi-i .yr{font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--text-s);margin-top:6px}
+    .wi-r{display:flex;justify-content:space-between;align-items:center}
+    .wi-d{font-family:var(--sans);font-size:.75rem;color:var(--text-s);line-height:1.7}
+    .wi-th{width:120px;height:90px;overflow:hidden;opacity:0;transform:translateX(10px);transition:opacity .4s var(--ease),transform .4s var(--ease);flex-shrink:0}
+    .wi:hover .wi-th{opacity:1;transform:translateX(0)}
+    .wi-th img{width:100%;height:100%;object-fit:cover}
+    .wi-arr{color:var(--text-t);opacity:0;transform:translateX(-10px);transition:opacity .3s,transform .3s var(--ease);flex-shrink:0;margin-left:24px}
+    .wi:hover .wi-arr{opacity:1;transform:translateX(0)}
+
+    /* ====== PORTFOLIO GALLERY SECTIONS ====== */
+    .portfolio-gallery{
+      padding:100px 48px 80px;
+      max-width:1500px;
+      margin:0 auto;
+    }
+    .portfolio-gallery.dark-bg{
+      background:#141311;
+      max-width:100%;
+      padding:100px 0 80px;
+    }
+    .portfolio-gallery.dark-bg .pg-inner{
+      max-width:1500px;
+      margin:0 auto;
+      padding:0 48px;
+    }
+    .pg-media{
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    .pg-row{
+      display:grid;
+      gap:20px;
+    }
+    .pg-row.full{
+      grid-template-columns:1fr;
+    }
+    .pg-row.half{
+      grid-template-columns:1fr 1fr;
+    }
+    .pg-row.third{
+      grid-template-columns:1fr 1fr 1fr;
+    }
+    .pg-row img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transition:transform .8s var(--ease);
+    }
+    .pg-row .pg-img{
+      overflow:hidden;
+      position:relative;
+    }
+    .pg-row .pg-img:hover img{
+      transform:scale(1.02);
+    }
+    .pg-title{
+      text-align:center;
+      padding-top:56px;
+    }
+    .pg-title h2{
+      font-family:var(--serif);
+      font-size:clamp(1.6rem,3vw,2.8rem);
+      font-weight:300;
+      letter-spacing:.02em;
+      line-height:1.15;
+      color:var(--text);
+    }
+    .dark-bg .pg-title h2{
+      color:#fff;
+    }
+    .pg-title .pg-subtitle{
+      font-family:var(--sans);
+      font-size:.72rem;
+      font-weight:300;
+      letter-spacing:.15em;
+      text-transform:uppercase;
+      color:var(--text-t);
+      margin-top:12px;
+    }
+    .dark-bg .pg-title .pg-subtitle{
+      color:rgba(255,255,255,.4);
+    }
+
+    /* Separator between gallery sections */
+    .section-divider{
+      width:100%;
+      height:1px;
+      background:var(--border);
+    }
+
+    /* ====== END PORTFOLIO GALLERY ====== */
+
+    .about{max-width:900px;margin-left:auto;margin-right:auto;padding-left:48px;padding-right:48px}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-top:12px}
+    .ah{font-family:var(--serif);font-size:clamp(1.8rem,3vw,2.5rem);font-weight:300;line-height:1.3;margin-bottom:32px}
+    .at{font-family:var(--sans);font-size:.82rem;line-height:1.85;color:var(--text-s);margin-bottom:24px}
+    .ei{margin-bottom:28px}
+    .ed{font-family:var(--sans);font-size:.82rem;font-weight:400;line-height:1.6;color:var(--text)}
+    .es{font-family:var(--sans);font-size:.75rem;color:var(--text-s);margin-top:3px;line-height:1.5}
+    .al{font-family:var(--serif);font-size:1.05rem;font-style:italic;color:var(--text-s);margin-top:40px;padding-top:24px;border-top:1px solid var(--border)}
+
+    .contact{background:#1a1917;color:#fff;text-align:center;padding:140px 48px 80px}
+    .contact .slabel{color:rgba(255,255,255,.35)}
+    .contact .slabel span{color:rgba(255,255,255,.15)}
+    .ch{font-family:var(--serif);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:300;line-height:1.4;max-width:520px;margin:0 auto 56px;color:rgba(255,255,255,.85)}
+    .cls{display:flex;flex-direction:column;align-items:center;gap:18px;margin-bottom:56px}
+    .cl{font-family:var(--sans);font-size:.78rem;letter-spacing:.08em;color:rgba(255,255,255,.55);position:relative;padding-bottom:2px;transition:color .3s}
+    .cl:hover{color:rgba(255,255,255,.9)}
+    .cl::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:rgba(255,255,255,.4);transition:width .4s var(--ease-out)}
+    .cl:hover::after{width:100%}
+    .cdiv{width:40px;height:1px;background:rgba(255,255,255,.15);margin:0 auto 56px}
+    .cf{font-family:var(--sans);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.25)}
+
+    .lb{position:fixed;inset:0;z-index:9999;background:rgba(10,10,8,.96);display:none;opacity:0;transition:opacity .5s var(--ease);overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .lb.active{display:block}.lb.visible{opacity:1}
+    .lb-x{position:fixed;top:28px;right:48px;z-index:10001;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-family:var(--sans);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;padding:8px 0;transition:color .3s}
+    .lb-x:hover{color:#fff}
+    .lb-c{max-width:1100px;margin:0 auto;padding:100px 48px 80px}
+    .lb-t{font-family:var(--serif);font-size:clamp(2rem,4vw,3.2rem);font-weight:300;color:#fff;line-height:1.15;margin-bottom:12px}
+    .lb-y{font-family:var(--serif);font-size:1.15rem;font-style:italic;color:rgba(255,255,255,.45);margin-bottom:24px}
+    .lb-m{font-family:var(--sans);font-size:.75rem;color:rgba(255,255,255,.4);line-height:1.8;margin-bottom:48px}
+    .lb-m strong{color:rgba(255,255,255,.6);font-weight:400;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:2px;margin-top:12px}
+    .lb-m strong:first-child{margin-top:0}
+    .lb-imgs{display:flex;flex-direction:column;gap:24px}
+    .lb-imgs img{width:100%;max-height:80vh;object-fit:contain;opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+    .lb-imgs img.iv{opacity:1;transform:translateY(0)}
+
+    .rv{opacity:0;transform:translateY(32px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+    .rv.rvd{opacity:1;transform:translateY(0)}
+    .rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+
+    @media(max-width:1024px){
+      section{padding:100px 32px}nav{padding:24px 32px}
+      .featured-work{grid-template-columns:1fr;gap:40px}.fi-info{padding-left:0;padding-top:20px}
+      .wi{grid-template-columns:1fr;gap:12px}.wi-th{display:none}
+      .about-grid{grid-template-columns:1fr;gap:48px}.hero{padding:0 32px 60px}.hero-scroll{right:32px}
+      .portfolio-gallery{padding:80px 32px 60px}
+      .portfolio-gallery.dark-bg .pg-inner{padding:0 32px}
+      .pg-row.half{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:768px){
+      section{padding:80px 24px}nav{padding:20px 24px}
+      .nav-links{display:none}
+      .nav-links.open{display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,8,.97);justify-content:center;align-items:center;gap:28px;z-index:999}
+      .nav-links.open a{font-size:1rem;letter-spacing:.15em}
+      .nav-toggle{display:block;z-index:1001}
+      .nav-toggle.open span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
+      .nav-toggle.open span:nth-child(2){opacity:0}
+      .nav-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
+      .hero{padding:0 24px 48px}.hero-scroll{display:none}
+      .contact{padding:80px 24px 60px}
+      .lb-c{padding:80px 24px 60px}.lb-x{right:24px;top:24px}
+      .fi-wrap{aspect-ratio:3/4}.wi{padding:36px 0}
+      .portfolio-gallery{padding:60px 24px 48px}
+      .portfolio-gallery.dark-bg .pg-inner{padding:0 24px}
+      .pg-row.half{grid-template-columns:1fr}
+      .pg-title{padding-top:36px}
+      .pg-title h2{font-size:clamp(1.4rem,5vw,2rem)}
+    }
+    @media(max-width:480px){.hero-title{font-size:clamp(2.5rem,14vw,4rem)}}
+  </style>
+</head>
+<body>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <nav id="mainNav">
+    <a href="#" class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Celine Lee</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#works" onclick="closeNav()">Works</a></li>
+      <li><a href="#about" onclick="closeNav()">About</a></li>
+      <li><a href="#contact" onclick="closeNav()">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="hero-bg"><canvas class="hero-canvas" id="heroCanvas"></canvas></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Celine<br>Lee</h1>
+      <p class="hero-sub">Sculpture &nbsp;·&nbsp; Seoul &amp; Chicago</p>
+    </div>
+    <div class="hero-scroll"><div class="scroll-line"></div><span>Scroll</span></div>
+  </section>
+
+  <section class="featured" id="featured">
+    <div class="slabel rv"><span>01</span> Featured</div>
+    <div class="featured-work">
+      <div class="fi-wrap rv" onclick="openLB(0)">
+        <img src="images/Blood_Vessels_of_Data_1.jpg" alt="Blood Vessels of Data, 2024" loading="lazy">
+      </div>
+      <div class="fi-info rv rd1">
+        <div class="fi-num">No. 7</div>
+        <h2 class="fi-title">Blood Vessels<br>of Data</h2>
+        <div class="fi-year">2024</div>
+        <div class="fi-meta">
+          <strong>Dimensions</strong>10" × 10" × 10"
+          <strong>Materials</strong>Mixed Media
+        </div>
+        <div class="fi-cta" onclick="openLB(0)">View Work <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="works-archive" id="works">
+    <div class="slabel rv"><span>02</span> All Works</div>
+    <div class="wgrid" id="wg"></div>
+  </section>
+
+  <!-- ====== TYPE POSTER SECTION ====== -->
+  <div class="portfolio-gallery">
+    <div class="pg-media">
+      <!-- Full-width: Chem Bond billboard mockup -->
+      <div class="pg-row full rv">
+        <div class="pg-img"><img src="chem_bond.webp" alt="Chem Bond — typeface billboard mockup" loading="lazy"></div>
+      </div>
+      <!-- Full-width: Display type character set -->
+      <div class="pg-row full rv">
+        <div class="pg-img"><img src="display_type.webp" alt="Chem Bond — full character set" loading="lazy"></div>
+      </div>
+      <!-- Two-up: Type posters -->
+      <div class="pg-row half rv">
+        <div class="pg-img"><img src="type_poster1.webp" alt="Covalent — banner poster" loading="lazy"></div>
+        <div class="pg-img"><img src="type_poster2.webp" alt="Covalent — elevator posters" loading="lazy"></div>
+      </div>
+      <!-- Two-up: Type poster mockups -->
+      <div class="pg-row half rv">
+        <div class="pg-img"><img src="type_poster_mockup1.webp" alt="Covalent — glass display mockup" loading="lazy"></div>
+        <div class="pg-img"><img src="type_poster_mockup2.webp" alt="Covalent — elevator mockup" loading="lazy"></div>
+      </div>
+      <!-- Full-width: Font mockup (Molecule box) -->
+      <div class="pg-row full rv">
+        <div class="pg-img"><img src="폰트_목업.webp" alt="Molecule — packaging mockup" loading="lazy"></div>
+      </div>
+    </div>
+    <!-- Title below the works -->
+    <div class="pg-title rv">
+      <h2>Type Poster</h2>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- ====== OFFORM ICONOGRAPHY SECTION ====== -->
+  <div class="portfolio-gallery">
+    <div class="pg-media">
+      <!-- Full-width: Icon mockup on concrete wall -->
+      <div class="pg-row full rv">
+        <div class="pg-img"><img src="icon-mockup.webp" alt="Ofform — icon projected on concrete wall" loading="lazy"></div>
+      </div>
+      <!-- Full-width: Icon & type reference -->
+      <div class="pg-row full rv">
+        <div class="pg-img"><img src="icon_-_type_ref.webp" alt="Ofform — typeface reference" loading="lazy"></div>
+      </div>
+      <!-- Full-width: Icon set -->
+      <div class="pg-row full rv">
+        <div class="pg-img"><img src="icon.webp" alt="Ofform — icon set" loading="lazy"></div>
+      </div>
+      <!-- Two-up: Icon mockups -->
+      <div class="pg-row half rv">
+        <div class="pg-img"><img src="아이콘_목업1.webp" alt="Ofform — restroom signage mockup" loading="lazy"></div>
+        <div class="pg-img"><img src="아이콘_목업2.webp" alt="Ofform — wayfinding signage mockup" loading="lazy"></div>
+      </div>
+    </div>
+    <!-- Title below the works -->
+    <div class="pg-title rv">
+      <h2>Ofform Iconography</h2>
+    </div>
+  </div>
+
+  <section class="about" id="about">
+    <div class="slabel rv"><span>03</span> About</div>
+    <div class="about-grid">
+      <div class="rv">
+        <h2 class="ah">Education</h2>
+        <div class="ei"><div class="ed">B.F.A. in Sculpture</div><div class="es">School of the Art Institute of Chicago<br>Chicago, United States</div></div>
+        <div class="ei"><div class="ed">B.F.A. in Environmental Sculpture</div><div class="es">University of Seoul<br>Seoul, Korea</div></div>
+      </div>
+      <div class="rv rd1">
+        <h2 class="ah">Practice</h2>
+        <p class="at">Celine Lee works across sculpture, mixed media, and installation—exploring materiality through resin, wool, wood, clay, and found objects. Her practice investigates the tension between organic form and constructed environment, often blurring the boundary between the familiar and the strange.</p>
+        <div class="al">Based in Seoul &amp; Chicago</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="slabel rv"><span>04</span> Contact</div>
+    <h2 class="ch rv rd1">For inquiries, commissions, exhibitions, and collaborations</h2>
+    <div class="cls rv rd2">
+      <a href="mailto:celinlee0725@gmail.com" class="cl">celinlee0725@gmail.com</a>
+      <a href="https://www.linkedin.com/in/celine-lee-12734435b" target="_blank" rel="noopener" class="cl">LinkedIn</a>
+      <a href="https://www.instagram.com/cearchiveline" target="_blank" rel="noopener" class="cl">@cearchiveline</a>
+    </div>
+    <div class="cdiv"></div>
+    <div class="cf rv rd3">&copy; 2024 Celine Lee. All rights reserved.</div>
+  </section>
+
+  <div class="lb" id="lb" role="dialog" aria-modal="true">
+    <button class="lb-x" id="lbx" aria-label="Close">Close</button>
+    <div class="lb-c">
+      <h2 class="lb-t" id="lbt"></h2>
+      <div class="lb-y" id="lby"></div>
+      <div class="lb-m" id="lbm"></div>
+      <div class="lb-imgs" id="lbi"></div>
+    </div>
+  </div>
+
+<script>
+const W=[
+  {id:7,t:'Blood Vessels of Data',y:2024,d:'10" \u00d7 10" \u00d7 10"',m:'Mixed Media',
+   imgs:['images/Blood_Vessels_of_Data_1.jpg','images/Blood_Vessels_of_Data_2.jpg','images/Bloods_Vessels_of_Data_3.jpg'],
+   th:'images/Blood_Vessels_of_Data_1.jpg'},
+  {id:6,t:'With a Good Eyes',y:2022,d:'24" \u00d7 21" \u00d7 18", 10" \u00d7 19" \u00d7 11"',m:'Resin, Wool, Curved Lens',
+   imgs:['images/With_a_Good_Eyes_1.JPG','images/With_a_Good_Eyes_2.JPG','images/With_a_Good_Eyes_3.JPG'],
+   th:'images/With_a_Good_Eyes_1.JPG'},
+  {id:5,t:'My Bunker',y:2022,d:'28" \u00d7 36" \u00d7 36"',m:'Woolen Fabric',
+   imgs:['images/My_bunker_1.png','images/My_bunker_2.png','images/My_bunker_3.png'],
+   th:'images/My_bunker_1.png'},
+  {id:4,t:'Mr. Octopus',y:2022,d:'29" \u00d7 20" \u00d7 19"',m:'Maidenhair Tree',
+   imgs:['images/Mr__Octopus_1.jpg','images/Mr__Octopus_2.jpg'],
+   th:'images/Mr__Octopus_1.jpg'},
+  {id:3,t:'Pulled Out',y:2021,d:'4" \u00d7 3" \u00d7 6", 5" \u00d7 4" \u00d7 8", 3" \u00d7 2" \u00d7 4"',m:'Sculpey, Stoneware Clay, Sand',
+   imgs:['images/Pulled_Out.JPG'],th:'images/Pulled_Out.JPG'},
+  {id:2,t:'Untitled',y:2020,d:'',m:'Marble',
+   imgs:['images/Untitled_1.jpg'],th:'images/Untitled_1.jpg'},
+  {id:1,t:'Untitled',y:2019,d:'32" \u00d7 8" \u00d7 16"',m:'Resin',
+   imgs:['images/Untitled_2.jpeg','images/Untitled_3.jpeg'],th:'images/Untitled_2.jpeg'},
+];
+
+// Render works grid
+const g=document.getElementById('wg');
+W.forEach((w,i)=>{
+  const e=document.createElement('div');
+  e.className='wi rv';e.style.transitionDelay=`${i*.05}s`;
+  e.onclick=()=>openLB(i);
+  e.innerHTML=`<div class="wi-l"><div class="wi-n">${String(w.id).padStart(2,'0')}</div><div class="wi-i"><h3>${w.t}</h3><div class="yr">${w.y}</div></div></div><div class="wi-r"><div class="wi-d">${w.d?w.d+'<br>':''}${w.m}</div><div class="wi-th"><img src="${w.th}" alt="${w.t}" loading="lazy"></div><div class="wi-arr"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg></div></div>`;
+  g.appendChild(e);
+});
+
+// === GENERATIVE HERO ===
+const cv=document.getElementById('heroCanvas'),cx=cv.getContext('2d');
+let af,tm=0;
+function rcv(){
+  const d=Math.min(devicePixelRatio||1,2),p=cv.parentElement;
+  cv.width=p.offsetWidth*d;cv.height=p.offsetHeight*d;
+  cv.style.width=p.offsetWidth+'px';cv.style.height=p.offsetHeight+'px';
+  cx.setTransform(d,0,0,d,0,0);
+}
+function h(x,y){const n=Math.sin(x*12.9898+y*78.233)*43758.5453;return n-Math.floor(n)}
+function sn(x,y){
+  const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+  const sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy);
+  const a=h(ix,iy),b=h(ix+1,iy),c=h(ix,iy+1),d=h(ix+1,iy+1);
+  return a+(b-a)*sx+(c-a)*sy+(a-b-c+d)*sx*sy;
+}
+function fb(x,y,o){let v=0,a=.5,f=1;for(let i=0;i<o;i++){v+=a*sn(x*f,y*f);a*=.5;f*=2.1}return v}
+
+function draw(t){
+  const w=cv.parentElement.offsetWidth,ht=cv.parentElement.offsetHeight;
+  cx.fillStyle='#141311';cx.fillRect(0,0,w,ht);
+  const sp=t*.00015;
+
+  // Flowing contour lines
+  for(let i=0;i<55;i++){
+    const p=i/55,by=ht*.12+p*ht*.8,al=Math.sin(p*Math.PI)*.16;
+    cx.beginPath();cx.strokeStyle=`rgba(195,188,178,${al})`;cx.lineWidth=.6;
+    for(let x=-10;x<=w+10;x+=4){
+      const nx=x/w*3.2,ny=p*4+sp;
+      const d=fb(nx+sp*.4,ny,5)*110-55;
+      const wv=Math.sin(x/w*Math.PI*2.5+t*.00025+i*.35)*22;
+      const y=by+d+wv;
+      x===-10?cx.moveTo(x,y):cx.lineTo(x,y);
+    }
+    cx.stroke();
+  }
+
+  // Soft orbs
+  [[w*.7,ht*.35,160,0],[w*.28,ht*.58,110,2.2],[w*.85,ht*.7,90,4.4]].forEach(([ox,oy,r,ph])=>{
+    const br=1+Math.sin(t*.0005+ph)*.1;
+    const gd=cx.createRadialGradient(ox,oy,0,ox,oy,r*br);
+    gd.addColorStop(0,'rgba(175,168,155,0.045)');
+    gd.addColorStop(.6,'rgba(155,148,135,0.02)');
+    gd.addColorStop(1,'rgba(135,128,115,0)');
+    cx.fillStyle=gd;cx.beginPath();cx.ellipse(ox,oy,r*br,r*br*1.2,0,0,Math.PI*2);cx.fill();
+  });
+
+  // Particles
+  for(let i=0;i<30;i++){
+    const px=h(i*7.1,t*.00007)*w*1.1-w*.05;
+    const py=h(i*3.7+100,t*.00005)*ht*1.1-ht*.05;
+    const sz=h(i*11.3,.5)*1.8+.4;
+    const a=h(i*5.9,t*.00008)*.18+.04;
+    cx.fillStyle=`rgba(205,198,185,${a})`;cx.beginPath();cx.arc(px,py,sz,0,Math.PI*2);cx.fill();
+  }
+}
+function anim(ts){tm=ts||0;draw(tm);af=requestAnimationFrame(anim)}
+rcv();cv.classList.add('loaded');anim();
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(rcv,150)});
+new IntersectionObserver(([e])=>{if(!e.isIntersecting)cancelAnimationFrame(af);else anim()},{threshold:0}).observe(document.getElementById('hero'));
+
+// Scroll reveal
+const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('rvd');ro.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+
+// Nav
+const nv=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>nv.classList.toggle('scrolled',scrollY>80),{passive:true});
+const tg=document.getElementById('navToggle'),nl=document.getElementById('navLinks');
+tg.addEventListener('click',()=>{tg.classList.toggle('open');nl.classList.toggle('open')});
+function closeNav(){tg.classList.remove('open');nl.classList.remove('open')}
+
+// Lightbox
+const lb=document.getElementById('lb');
+function openLB(i){
+  const w=W[i];
+  document.getElementById('lbt').textContent=w.t;
+  document.getElementById('lby').textContent=w.y;
+  document.getElementById('lbm').innerHTML=(w.d?`<strong>Dimensions</strong>${w.d}`:'')+`<strong>Materials</strong>${w.m}`;
+  const c=document.getElementById('lbi');c.innerHTML='';
+  w.imgs.forEach((s,j)=>{const img=document.createElement('img');img.src=s;img.alt=`${w.t} — view ${j+1}`;img.loading='lazy';setTimeout(()=>img.classList.add('iv'),100+j*150);c.appendChild(img)});
+  lb.classList.add('active');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>lb.classList.add('visible')));
+  document.body.style.overflow='hidden';lb.scrollTop=0;
+}
+function closeLB(){lb.classList.remove('visible');setTimeout(()=>{lb.classList.remove('active');document.body.style.overflow=''},500)}
+document.getElementById('lbx').addEventListener('click',closeLB);
+lb.addEventListener('click',e=>{if(e.target===lb)closeLB()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&lb.classList.contains('active'))closeLB()});
+
+// Cursor
+const dt=document.getElementById('cursorDot');
+if(matchMedia('(pointer:fine)').matches){
+  document.addEventListener('mousemove',e=>{dt.style.left=e.clientX+'px';dt.style.top=e.clientY+'px';if(!dt.classList.contains('visible'))dt.classList.add('visible')});
+  document.addEventListener('mouseleave',()=>dt.classList.remove('visible'));
+  document.querySelectorAll('a, button, .fi-wrap, .wi, .fi-cta, .pg-img').forEach(el=>{
+    el.addEventListener('mouseenter',()=>dt.classList.add('hovering'));
+    el.addEventListener('mouseleave',()=>dt.classList.remove('hovering'));
+  });
+}
+</script>
+</body>
+</html>
